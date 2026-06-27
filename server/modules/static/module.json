@@ -1,0 +1,25 @@
+{
+    "name": "static",
+    "version": "1.0.0",
+    "description": "A static light module",
+    "entry": "main.py",
+    "class": "StaticModule",
+    "parameters": [
+        {
+            "name": "color",
+            "type": "ColorModel",
+            "default": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "description": "RGB color to display"
+        },
+        {
+            "name": "intensity",
+            "type": "float",
+            "default": 1.0,
+            "description": "Brightness intensity [0.0 - 1.0]"
+        }
+    ]
+}

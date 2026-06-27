@@ -1,0 +1,27 @@
+{
+    "name": "rainbow",
+    "version": "1.0.0",
+    "description": "",
+    "entry": "main.py",
+    "class": "RainbowModule",
+    "parameters": [
+        {
+            "name": "fps",
+            "type": "int",
+            "default": 60,
+            "description": ""
+        },
+        {
+            "name": "speed",
+            "type": "float",
+            "default": 0.5,
+            "description": ""
+        },
+        {
+            "name": "spread",
+            "type": "float",
+            "default": 1.0,
+            "description": ""
+        }
+    ]
+}
