@@ -7,7 +7,7 @@ from server.api.models import ColorModel
 class RainbowModule(ModuleBase):
     def __init__(self, target, clock, params):
         super().__init__(target, clock, params, layers=[Layer.COLOR])
-        self.every_n_frames = round(1 / params.get('fps', 60) * clock.fps)
+        self.every_n_frames = round(1 / params['fps'] * clock.fps)
 
     async def run(self):
         while self.running:

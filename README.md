@@ -1,4 +1,4 @@
-# Led Controller
+# Gleam
 
 Personal smart lighting system for SK6812 RGBW LED strips. Controlled via a mobile web app on the local network.
 
@@ -16,3 +16,14 @@ Currently working:
 - Plugin-based module system, modules are isolated and independently activatable
 - REST API via FastAPI
 - React PWA frontend (offline-first, LAN only)
+
+---
+
+## Setup
+
+```bash
+make install    # install the requirements from requirements.txt
+make start      # Start the FastAPI backend
+```
+
+The API will then be available at `http://localhost:8000`.
