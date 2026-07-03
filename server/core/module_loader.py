@@ -38,9 +38,8 @@ def load_module(module_name: str, target, clock: Clock, params: dict={}):
         raise ImportError(f'Module {module_name} not found')
     metadata = discover_modules()
     default_params = {
-        param['name']: param['default']
-        for module in metadata.values()
-        for param in module['parameters']
+        param["name"]: param["default"]
+        for param in metadata[module_name]["parameters"]
     }
     params = {**default_params, **params}
     if module_name not in metadata:

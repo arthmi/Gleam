@@ -1,6 +1,5 @@
 # server/core/leds.py
 from server.core.types import ColorModel
-from server.core.module_base import ModuleBase
 
 class LedStrip:
     def __init__(self, id: int, name: str, num_leds: int):
@@ -26,7 +25,7 @@ class LedStrip:
             pixel: int,
             *,
             color: ColorModel|None=None,
-            white: float|None=None,
+            white: int|None=None,
             intensity: float|None=None
         ):
         if pixel < 0 or pixel >= self.num_leds:
@@ -36,6 +35,7 @@ class LedStrip:
         if white is not None:
             self.white_buffer[pixel] = white
         if intensity is not None:
+            intensity = min(intensity, 1.0)
             self.intensity_buffer[pixel] = intensity
         
 
@@ -49,12 +49,12 @@ class LedStrip:
                 int(r * intensity),
                 int(g * intensity),
                 int(b * intensity),
-                int(255 * w * intensity)
+                int(w * intensity)
             )
-            # string += f'\033[38;2;{final[0] + final[3]};{final[1] + final[3]};{final[2] + final[3]}m\u2588\033[0m'
-            string += f'\n\033[38;2;{r};{g};{b}m\u2588\u2588\033[0m  '
+            string += f'\n\033[38;2;{final[0]};{final[1]};{final[2]}m\u2588\u2588\033[0m'
+            string += f'\033[38;2;{final[3]};{final[3]};{final[3]}m\u2588\u2588\033[0m  '
             string += f'{r = }, {g = }, {b = }, {w = }, {intensity = }'
-            print(string)
+        print(string)
 
     def clear(self):
         self.color_buffer = [ColorModel(r=0, g=0, b=0)] * self.num_leds
@@ -77,7 +77,7 @@ class LedGroup:
         for pixel in range(self.end - self.start + 1):
             self.strip.set_pixel(pixel + self.start, color=color)
 
-    def set_white(self, white: float):
+    def set_white(self, white: int):
         for pixel in range(self.end - self.start + 1):
             self.strip.set_pixel(pixel + self.start, white=white)
 
@@ -91,4 +91,4 @@ class LedGroup:
 
     def clear(self):
         for pixel in range(self.end - self.start):
-            self.strip.set_pixel(pixel + self.start, color=ColorModel(r=0, g=0, b=0), white=0.0, intensity=1.0)
+            self.strip.set_pixel(pixel + self.start, color=ColorModel(r=0, g=0, b=0), white=0, intensity=1.0)

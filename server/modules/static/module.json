@@ -16,6 +16,12 @@
             "description": "RGB color to display"
         },
         {
+            "name": "white",
+            "type": "float",
+            "default": 0.0,
+            "description": "White LED brightness [0.0 - 1.0]"
+        },
+        {
             "name": "intensity",
             "type": "float",
             "default": 1.0,

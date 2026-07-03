@@ -18,4 +18,4 @@ class RainbowModule(ModuleBase):
                     hue = (base_hue + i * self.params['spread'] / self.target.num_leds) % 1.0
                     r, g, b = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
                     self._set_color(ColorModel(r=int(r*255), g=int(g*255), b=int(b*255)))
-                    self.target.show()
+                self.target.show()
