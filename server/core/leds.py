@@ -1,5 +1,6 @@
 # server/core/leds.py
 from server.core.types import ColorModel
+from server.core.types import Layer
 
 class LedStrip:
     def __init__(self, id: int, name: str, num_leds: int):
@@ -7,14 +8,15 @@ class LedStrip:
         self.name = name
         self.num_leds = num_leds
         self.groups: dict[int, LedGroup] = {}
+
         self.color_buffer: list[ColorModel]= [ColorModel(r=0, g=0, b=0)] * num_leds
-        self.white_buffer: list[float]= [0.0] * num_leds
+        self.white_buffer: list[int]= [0] * num_leds
         self.intensity_buffer: list[float]= [1.0] * num_leds
 
     def set_color(self, color: ColorModel):
         self.color_buffer = [color] * self.num_leds
 
-    def set_white(self, white: float):
+    def set_white(self, white: int):
         self.white_buffer = [white] * self.num_leds
     
     def set_intensity(self, intensity: float):
@@ -49,16 +51,16 @@ class LedStrip:
                 int(r * intensity),
                 int(g * intensity),
                 int(b * intensity),
-                int(w * intensity)
+                int(w)
             )
             string += f'\n\033[38;2;{final[0]};{final[1]};{final[2]}m\u2588\u2588\033[0m'
-            string += f'\033[38;2;{final[3]};{final[3]};{final[3]}m\u2588\u2588\033[0m  '
+            string += f'\033[38;2;{final[3]};{final[3]};{final[3]}m\u2588\u2588\033[0m    '
             string += f'{r = }, {g = }, {b = }, {w = }, {intensity = }'
         print(string)
 
     def clear(self):
         self.color_buffer = [ColorModel(r=0, g=0, b=0)] * self.num_leds
-        self.white_buffer = [0.0] * self.num_leds
+        self.white_buffer = [0] * self.num_leds
         self.intensity_buffer = [1.0] * self.num_leds
 
 class LedGroup:
@@ -70,18 +72,32 @@ class LedGroup:
         self.end = end
         self.num_leds = end - start
 
+        self.frozen_layers: set[Layer] = set()
+
     def set_pixel(self, pixel: int, *, color=None, white=None, intensity=None):
+        if Layer.COLOR in self.frozen_layers:
+            color = None
+        if Layer.WHITE in self.frozen_layers:
+            white = None
+        if Layer.INTENSITY in self.frozen_layers:
+            intensity = None
         self.strip.set_pixel(pixel + self.start, color=color, white=white, intensity=intensity)
 
     def set_color(self, color: ColorModel):
+        if Layer.COLOR in self.frozen_layers:
+            return
         for pixel in range(self.end - self.start + 1):
             self.strip.set_pixel(pixel + self.start, color=color)
 
     def set_white(self, white: int):
+        if Layer.WHITE in self.frozen_layers:
+            return
         for pixel in range(self.end - self.start + 1):
             self.strip.set_pixel(pixel + self.start, white=white)
 
     def set_intensity(self, intensity: float):
+        if Layer.INTENSITY in self.frozen_layers:
+            return
         for pixel in range(self.end - self.start + 1):
             self.strip.set_pixel(pixel + self.start, intensity=intensity)
 
@@ -92,3 +108,17 @@ class LedGroup:
     def clear(self):
         for pixel in range(self.end - self.start):
             self.strip.set_pixel(pixel + self.start, color=ColorModel(r=0, g=0, b=0), white=0, intensity=1.0)
+
+    def freeze(self, layers: set[Layer]|None = None):
+        print(f'{type(layers) = }')
+        self.frozen_layers = layers or {Layer.COLOR, Layer.INTENSITY, Layer.WHITE}
+        print(f'Frozen layers for group {self.id}: {self.frozen_layers}')
+
+    def unfreeze(self, layers: set[Layer]|None = None):
+        print(f'{type(layers) = }')
+        if not layers:
+            self.frozen_layers.clear()
+            print(f'Unfroze all layers for group {self.id}')
+        else:
+            self.frozen_layers -= layers
+            print(f'Unfroze layers {layers} for group {self.id}')

@@ -1,7 +1,8 @@
 # server/core/types.py
 from pydantic import BaseModel, Field
+from enum import Enum
 
-class ModuleTarget(BaseModel):
+class Target(BaseModel):
     type: str    # 'strip' or 'group'
     id: int
     
@@ -13,7 +14,7 @@ class ColorModel(BaseModel):
     g: int = Field(..., ge=0, le=255)
     b: int = Field(..., ge=0, le=255)
 
-class Layer:
+class Layer(str, Enum):
     COLOR     = "color"
     INTENSITY = "intensity"
     WHITE     = "white"

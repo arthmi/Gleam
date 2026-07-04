@@ -4,7 +4,7 @@ import asyncio
 from server.database import Database
 from server.core.leds import LedStrip, LedGroup
 from server.core.module_loader import load_module
-from server.core.types import ModuleTarget, ColorModel, Layer
+from server.core.types import Target, ColorModel, Layer
 from server.core.clock import Clock
 
 class AppState:
@@ -59,12 +59,12 @@ class AppState:
         if strip.num_leds != num_leds:
             strip.num_leds = num_leds
             strip.color_buffer = [ColorModel(r=0, g=0, b=0)] * num_leds
-            strip.white_buffer = [0.0] * num_leds
+            strip.white_buffer = [0] * num_leds
             strip.intensity_buffer = [1.0] * num_leds
         return strip
 
     async def remove_strip(self, id: int) -> None:
-        await self.stop_module(ModuleTarget(type='strip', id=id))
+        await self.stop_module(Target(type='strip', id=id))
         for group_id in list(self.strips[id].groups.keys()):
             del self.groups[group_id]
         self.db.delete_strip(id)
@@ -96,14 +96,14 @@ class AppState:
         return group
 
     async def remove_group(self, group_id: int) -> None:
-        await self.stop_module(ModuleTarget(type='group', id=group_id))
+        await self.stop_module(Target(type='group', id=group_id))
         self.db.delete_group(group_id)
         del self.active_modules[self.groups[group_id].strip.id][group_id]
         del self.groups[group_id]
 
        
 
-    async def start_module(self, module_name: str, target: ModuleTarget, params: dict={}, layers: list[str]|None=None) -> None:
+    async def start_module(self, module_name: str, target: Target, params: dict={}, layers: list[str]|None=None) -> None:
         match target.type:
             case 'strip':
                 if target.id not in self.strips:
@@ -112,7 +112,7 @@ class AppState:
                 for group_id, _ in groups.items():
                     await self.start_module(
                         module_name,
-                        ModuleTarget(
+                        Target(
                             type='group',
                             id=group_id
                         ),
@@ -147,14 +147,14 @@ class AppState:
             case _:
                 raise ValueError(f'Invalid target type: {target.type}')
 
-    async def stop_module(self, target: ModuleTarget) -> None:
+    async def stop_module(self, target: Target) -> None:
         match target.type:
             case 'strip':
                 if target.id not in self.strips:
                     raise ValueError(f'Strip with id {target.id} does not exist')
                 for group_id, _ in self.active_modules[target.id].items():
                     await self.stop_module(
-                        ModuleTarget(
+                        Target(
                             type='group',
                             id=group_id
                         ),

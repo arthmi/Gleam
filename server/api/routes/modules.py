@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from server.api.dependencies import get_state
 from server.core.module_loader import discover_modules
-from server.api.models import ModuleTarget, StartModuleRequest
+from server.api.models import Target, StartModuleRequest
 
 router = APIRouter(prefix='/modules', tags=['modules'])
 
@@ -15,7 +15,7 @@ async def start_module(module_name: str, request: StartModuleRequest, state=Depe
     return {'status': 'success', 'message': f'Module {module_name} started on {request.target_type} {request.target_id} with {request.layers} as layers'}
 
 @router.post('/stop')
-async def stop_module(target: ModuleTarget, state=Depends(get_state)):
+async def stop_module(target: Target, state=Depends(get_state)):
     await state.stop_module(target)
     return {'status': 'success', 'message': f'Module stopped on {target.type} {target.id}'}
 

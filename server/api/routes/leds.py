@@ -1,7 +1,8 @@
 # server/api/routes/leds.py
 from fastapi import APIRouter, Depends, HTTPException
 
-from server.api.models import ColorModel, StripResponse, GroupResponse, CreateStripRequest, UpdateStripRequest, CreateGroupRequest, UpdateGroupRequest
+from server.api.models import ColorModel, StripResponse, GroupResponse, CreateStripRequest, UpdateStripRequest, CreateGroupRequest, UpdateGroupRequest, FreezeRequest
+from server.core.types import Target
 from server.api.dependencies import get_state
 
 router = APIRouter(prefix='/leds', tags=['leds'])
@@ -22,6 +23,7 @@ def get_list(state=Depends(get_state)):
                 'end': group.end
             }
     return list
+
 
 
 @router.post('/strip', response_model=StripResponse)
@@ -47,34 +49,6 @@ def get_strip(strip_id: int, state=Depends(get_state)):
     if strip_id not in state.strips:
         raise HTTPException(status_code=404, detail=f'Strip {strip_id} not found')
     return state.strips[strip_id]
-
-
-@router.post('/strip/{strip_id}/color')
-def set_strip_color(strip_id: int, color: ColorModel, state=Depends(get_state)):
-    if strip_id not in state.strips:
-        raise HTTPException(status_code=404, detail=f'Strip {strip_id} not found')
-    strip = state.strips[strip_id]
-    strip.set_color(color)
-    strip.show()
-    return {'status': 'success', 'message': f'Strip {strip_id} color updated to ({color.r}, {color.g}, {color.b})'}
-
-@router.post('/strip/{strip_id}/white')
-def set_strip_white(strip_id: int, brightness: float, state=Depends(get_state)):
-    if strip_id not in state.strips:
-        raise HTTPException(status_code=404, detail=f'Strip {strip_id} not found')
-    strip = state.strips[strip_id]
-    strip.set_white(brightness)
-    strip.show()
-    return {'status': 'success', 'message': f'Strip {strip_id} white updated to ({brightness})'}
-
-@router.post('/strip/{strip_id}/intensity')
-def set_strip_intensity(strip_id: int, intensity: float, state=Depends(get_state)):
-    if strip_id not in state.strips:
-        raise HTTPException(status_code=404, detail=f'Strip {strip_id} not found')
-    strip = state.strips[strip_id]
-    strip.set_intensity(intensity)
-    strip.show()
-    return {'status': 'success', 'message': f'Strip {strip_id} intensity updated to ({intensity})'}
 
 
 
@@ -110,30 +84,102 @@ def get_group(group_id: int, state=Depends(get_state)):
     }
 
 
-@router.post('/group/{group_id}/color')
-def set_groups_color(group_id: int, color: ColorModel, state=Depends(get_state)):
-    if group_id not in state.groups:
-        raise HTTPException(status_code=404, detail=f'Group {group_id} not found')
-    group = state.groups[group_id]
-    group.set_color(color)
-    group.show()
-    return {'status': 'success', 'message': f'Group {group_id} color updated to ({color.r}, {color.g}, {color.b})'}
 
-@router.post('/group/{group_id}/white')
-def set_groups_white(group_id: int, brightness: float, state=Depends(get_state)):
-    if group_id not in state.groups:
-        raise HTTPException(status_code=404, detail=f'Group {group_id} not found')
-    group = state.groups[group_id]
-    group.set_white(brightness)
-    group.show()
-    return {'status': 'success', 'message': f'Group {group_id} white updated to ({brightness})'}
+@router.post('/color')
+async def set_color(target: Target, color: ColorModel, state=Depends(get_state)):
+    match target.type:
+        case 'strip':
+            if target.id not in state.strips:
+                raise HTTPException(status_code=404, detail=f'Strip {target.id} not found')
+            strip = state.strips[target.id]
+            strip.set_color(color)
+            strip.show()
+            return {'status': 'success', 'message': f'Strip {target.id} color updated to ({color.r}, {color.g}, {color.b})'}
+        case 'group':
+            if target.id not in state.groups:
+                raise HTTPException(status_code=404, detail=f'Group {target.id} not found')
+            group = state.groups[target.id]
+            group.set_color(color)
+            group.show()
+            return {'status': 'success', 'message': f'Group {target.id} color updated to ({color.r}, {color.g}, {color.b})'}
+        case _:
+            raise HTTPException(status_code=400, detail=f'Invalid target type {target.type}')
+        
+@router.post('/white')
+async def set_white(target: Target, brightness: int, state=Depends(get_state)):
+    match target.type:
+        case 'strip':
+            if target.id not in state.strips:
+                raise HTTPException(status_code=404, detail=f'Strip {target.id} not found')
+            strip = state.strips[target.id]
+            strip.set_white(brightness)
+            strip.show()
+            return {'status': 'success', 'message': f'Strip {target.id} white updated to ({brightness})'}
+        case 'group':
+            if target.id not in state.groups:
+                raise HTTPException(status_code=404, detail=f'Group {target.id} not found')
+            group = state.groups[target.id]
+            group.set_white(brightness)
+            group.show()
+            return {'status': 'success', 'message': f'Group {target.id} white updated to ({brightness})'}
+        case _:
+            raise HTTPException(status_code=400, detail=f'Invalid target type {target.type}')
 
-@router.post('/group/{group_id}/intensity')
-def set_groups_intensity(group_id: int, intensity: float, state=Depends(get_state)):
-    if group_id not in state.groups:
-        raise HTTPException(status_code=404, detail=f'Group {group_id} not found')
-    group = state.groups[group_id]
-    group.set_intensity(intensity)
-    group.show()
-    return {'status': 'success', 'message': f'Group {group_id} intensity updated to ({intensity})'}
+@router.post('/intensity')
+async def set_intensity(target: Target, intensity: int, state=Depends(get_state)):
+    match target.type:
+        case 'strip':
+            if target.id not in state.strips:
+                raise HTTPException(status_code=404, detail=f'Strip {target.id} not found')
+            strip = state.strips[target.id]
+            strip.set_intensity(intensity)
+            strip.show()
+            return {'status': 'success', 'message': f'Strip {target.id} intensity updated to ({intensity})'}
+        case 'group':
+            if target.id not in state.groups:
+                raise HTTPException(status_code=404, detail=f'Group {target.id} not found')
+            group = state.groups[target.id]
+            group.set_intensity(intensity)
+            group.show()
+            return {'status': 'success', 'message': f'Group {target.id} intensity updated to ({intensity})'}
+        case _:
+            raise HTTPException(status_code=400, detail=f'Invalid target type {target.type}')
 
+
+@router.post('/freeze')
+async def freeze(target: Target, body: FreezeRequest, state=Depends(get_state)):
+    match target.type:
+        case 'strip':
+            if target.id not in state.strips:
+                raise HTTPException(status_code=404, detail=f'Strip {target.id} not found')
+            strip = state.strips[target.id]
+            for group in strip.groups.values():
+                group.freeze(body.layers)
+            return {'status': 'success', 'message': f'Strip {target.id} frozen with layers {body.layers}'}
+        case 'group':
+            if target.id not in state.groups:
+                raise HTTPException(status_code=404, detail=f'Group {target.id} not found')
+            group = state.groups[target.id]
+            group.freeze(body.layers)
+            return {'status': 'success', 'message': f'Group {target.id} frozen with layers {body.layers}'}
+        case _:
+            raise HTTPException(status_code=400, detail=f'Invalid target type {target.type}')
+
+@router.post('/unfreeze')
+async def unfreeze(target: Target, body: FreezeRequest, state=Depends(get_state)):
+    match target.type:
+        case 'strip':
+            if target.id not in state.strips:
+                raise HTTPException(status_code=404, detail=f'Strip {target.id} not found')
+            strip = state.strips[target.id]
+            for group in strip.groups.values():
+                group.unfreeze(body.layers)
+            return {'status': 'success', 'message': f'Strip {target.id} unfrozen with layers {body.layers}'}
+        case 'group':
+            if target.id not in state.groups:
+                raise HTTPException(status_code=404, detail=f'Group {target.id} not found')
+            group = state.groups[target.id]
+            group.unfreeze(body.layers)
+            return {'status': 'success', 'message': f'Group {target.id} unfrozen with layers {body.layers}'}
+        case _:
+            raise HTTPException(status_code=400, detail=f'Invalid target type {target.type}')

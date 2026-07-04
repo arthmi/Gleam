@@ -5,7 +5,7 @@ from server.core.types import Layer
 
 class StaticModule(ModuleBase):
     def __init__(self, target, clock, params):
-        super().__init__(target, clock, params, layers=[Layer.COLOR, Layer.WHITE, Layer.INTENSITY])
+        super().__init__(target, clock, params, layers=[Layer.COLOR, Layer.INTENSITY])
 
 
     async def run(self):
