@@ -50,13 +50,31 @@ def get_strip(strip_id: int, state=Depends(get_state)):
 
 
 @router.post('/strip/{strip_id}/color')
-def set_strips_color(strip_id: int, color: ColorModel, state=Depends(get_state)):
+def set_strip_color(strip_id: int, color: ColorModel, state=Depends(get_state)):
     if strip_id not in state.strips:
         raise HTTPException(status_code=404, detail=f'Strip {strip_id} not found')
     strip = state.strips[strip_id]
     strip.set_color(color)
     strip.show()
     return {'status': 'success', 'message': f'Strip {strip_id} color updated to ({color.r}, {color.g}, {color.b})'}
+
+@router.post('/strip/{strip_id}/white')
+def set_strip_white(strip_id: int, brightness: float, state=Depends(get_state)):
+    if strip_id not in state.strips:
+        raise HTTPException(status_code=404, detail=f'Strip {strip_id} not found')
+    strip = state.strips[strip_id]
+    strip.set_white(brightness)
+    strip.show()
+    return {'status': 'success', 'message': f'Strip {strip_id} white updated to ({brightness})'}
+
+@router.post('/strip/{strip_id}/intensity')
+def set_strip_intensity(strip_id: int, intensity: float, state=Depends(get_state)):
+    if strip_id not in state.strips:
+        raise HTTPException(status_code=404, detail=f'Strip {strip_id} not found')
+    strip = state.strips[strip_id]
+    strip.set_intensity(intensity)
+    strip.show()
+    return {'status': 'success', 'message': f'Strip {strip_id} intensity updated to ({intensity})'}
 
 
 
@@ -100,3 +118,22 @@ def set_groups_color(group_id: int, color: ColorModel, state=Depends(get_state))
     group.set_color(color)
     group.show()
     return {'status': 'success', 'message': f'Group {group_id} color updated to ({color.r}, {color.g}, {color.b})'}
+
+@router.post('/group/{group_id}/white')
+def set_groups_white(group_id: int, brightness: float, state=Depends(get_state)):
+    if group_id not in state.groups:
+        raise HTTPException(status_code=404, detail=f'Group {group_id} not found')
+    group = state.groups[group_id]
+    group.set_white(brightness)
+    group.show()
+    return {'status': 'success', 'message': f'Group {group_id} white updated to ({brightness})'}
+
+@router.post('/group/{group_id}/intensity')
+def set_groups_intensity(group_id: int, intensity: float, state=Depends(get_state)):
+    if group_id not in state.groups:
+        raise HTTPException(status_code=404, detail=f'Group {group_id} not found')
+    group = state.groups[group_id]
+    group.set_intensity(intensity)
+    group.show()
+    return {'status': 'success', 'message': f'Group {group_id} intensity updated to ({intensity})'}
+

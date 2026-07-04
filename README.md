@@ -8,7 +8,7 @@ Built for a Raspberry Pi 4B running a FastAPI server, with a React PWA as the in
 
 ## What it does
 
-The system lets you control addressable LED strips installed throughout a room. Strips are split into named groups (e.g. "desk", "ceiling", "headboard"), each independently controllable. Modules can drive these groups with dynamic effects — reacting to audio, video, time of day, or whatever else.
+The system lets you control addressable LED strips installed throughout a room. Strips are split into named groups (e.g. "desk", "ceiling", "headboard"), each independently controllable. Modules can drive these groups with dynamic effects: reacting to audio, video, time of day, or whatever else.
 
 Currently working:
 
