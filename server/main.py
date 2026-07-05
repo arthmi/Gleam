@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from server.database import Database
 from server.core.state import AppState
+
 from server.api.routes.leds import router as leds_router
 from server.api.routes.targets import router as targets_router
 from server.api.routes.modules import router as modules_router
@@ -11,7 +12,7 @@ from server.api.routes.modules import router as modules_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # STARTUP
-    db = Database('server/database/leds.db')
+    db = Database('server/storage/database.db')
     state = AppState(db)
     app.state.app_state = state
     await state.startup()
