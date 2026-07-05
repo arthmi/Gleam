@@ -63,6 +63,14 @@ class LedStrip:
         self.white_buffer = [0] * self.num_leds
         self.intensity_buffer = [1.0] * self.num_leds
 
+    def freeze(self, layers: set[Layer]|None = None):
+        for group in self.groups.values():
+            group.freeze(layers)
+
+    def unfreeze(self, layers: set[Layer]|None = None):
+        for group in self.groups.values():
+            group.unfreeze(layers)
+
 class LedGroup:
     def __init__(self, id: int, name: str, strip: LedStrip, start: int, end: int):
         self.id = id
