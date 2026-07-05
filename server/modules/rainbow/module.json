@@ -1,27 +1,21 @@
 {
     "name": "rainbow",
     "version": "1.0.0",
-    "description": "",
+    "description": "A rainbow effect module",
     "entry": "main.py",
     "class": "RainbowModule",
     "parameters": [
         {
-            "name": "fps",
-            "type": "int",
-            "default": 60,
-            "description": ""
-        },
-        {
             "name": "speed",
             "type": "float",
             "default": 0.5,
-            "description": ""
+            "description": "Speed of the rainbow effect [0.0 - 1.0]"
         },
         {
             "name": "spread",
             "type": "float",
             "default": 1.0,
-            "description": ""
+            "description": "How many times the rainbow is repeated across the strip"
         }
     ]
 }
