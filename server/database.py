@@ -1,6 +1,7 @@
 # server/database.py
 import sqlite3
 import threading
+import json
 
 class Database:
     def __init__(self, db_path):
@@ -107,16 +108,21 @@ class Database:
 
 
 
-    def add_scene(self, name: str, strip_id: int, group_id: int, layer: set, module_name: str, params: dict):
+    def add_scene(self, name: str, modules: dict):
         self.cursor.execute('INSERT INTO scenes (name) VALUES (?)', (name,))
         scene_id = self.cursor.lastrowid
-        self.cursor.execute('INSERT INTO scene_modules (scene_id, strip_id, group_id, layer, module_name, params) VALUES (?, ?, ?, ?, ?, ?)', (scene_id, strip_id, group_id, layer, module_name, params,))
-        self.conn.commit()
+        for strip_id, groups in modules.items():
+            for group_id, layers in groups.items():
+                for layer, entry in layers.items():
+                    if entry:
+                        module, params = entry
+                        self.cursor.execute('INSERT INTO scene_modules (scene_id, strip_id, group_id, layer, module_name, params) VALUES (?, ?, ?, ?, ?, ?)', (scene_id, strip_id, group_id, layer, module.__class__.__name__, json.dumps(module.params),))
+                        self.conn.commit()
         return scene_id
     
     def update_scene(self, id: int, name: str, module_name: str, params: dict):
         self.cursor.execute('UPDATE scenes SET name = (?) WHERE id = (?)', (name, id,))
-        self.cursor.execute('UPDATE scene_modules SET module_name = (?), params = (?) WHERE scene_id = (?)', (module_name, params, id,))
+        self.cursor.execute('UPDATE scene_modules SET module_name = (?), params = (?) WHERE scene_id = (?)', (module_name, str(params), id,))
         self.conn.commit()
 
     def delete_scene(self, id: int):
@@ -131,6 +137,9 @@ class Database:
             self.cursor.execute('SELECT * FROM scenes')
         return self.cursor.fetchall()
 
+    def get_scene_modules(self, scene_id: int):
+        self.cursor.execute('SELECT * FROM scene_modules WHERE scene_id = ?', (scene_id,))
+        return self.cursor.fetchall()
 
 
     def close(self):

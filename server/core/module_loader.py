@@ -47,3 +47,7 @@ def load_module(module_name: str, target, clock: Clock, params: dict={}):
     mod = _import_module(module_path, metadata[module_name]['entry'])
     module_class = getattr(mod, metadata[module_name]['class'])
     return module_class(target, clock, params)
+
+def build_class_to_name(registry: dict | None = None) -> dict:
+    registry = registry or discover_modules()
+    return {meta['class']: name for name, meta in registry.items()}

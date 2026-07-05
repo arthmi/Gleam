@@ -9,6 +9,7 @@ from server.core.state import AppState
 from server.api.routes.leds import router as leds_router
 from server.api.routes.targets import router as targets_router
 from server.api.routes.modules import router as modules_router
+from server.api.routes.scenes import router as screnes_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,3 +30,4 @@ app = FastAPI(title='Gleam', lifespan=lifespan)
 app.include_router(targets_router)
 app.include_router(leds_router)
 app.include_router(modules_router)
+app.include_router(screnes_router)

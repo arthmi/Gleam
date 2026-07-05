@@ -39,3 +39,8 @@ class GroupRequest(BaseModel):
 
 class FreezeRequest(BaseModel):
     layers: set[Layer] | None = None
+
+class SceneRequest(BaseModel):
+    name: str
+    module_name: str
+    params: dict
