@@ -1,19 +1,19 @@
 # server/api/models.py
 from pydantic import BaseModel, Field
 
-from server.core.types import Layer, Target, ColorModel
+from server.core.types import Layer, Target
 
 class StripResponse(BaseModel):
     id: int
     name: str
-    num_leds: int
+    num_leds: int = Field(..., gt=0)
 
 class GroupResponse(BaseModel):
     id: int
     name: str
     strip_id: int
-    start: int
-    end: int
+    start: int = Field(..., ge=0)
+    end: int = Field(..., ge=0)
 
 
 class StartModuleRequest(BaseModel):
@@ -26,24 +26,16 @@ class StartModuleRequest(BaseModel):
         return Target(type=self.target_type, id=self.target_id)
 
 
-class CreateStripRequest(BaseModel):
+class StripRequest(BaseModel):
     name: str
-    num_leds: int
+    num_leds: int = Field(..., gt=0)
 
-class UpdateStripRequest(BaseModel):
-    name: str
-    num_leds: int
 
-class CreateGroupRequest(BaseModel):
+class GroupRequest(BaseModel):
     name: str
     strip_id: int
-    start: int
-    end: int
-
-class UpdateGroupRequest(BaseModel):
-    name: str
-    start: int
-    end: int
+    start: int = Field(..., ge=0)
+    end: int = Field(..., ge=0)
 
 class FreezeRequest(BaseModel):
     layers: set[Layer] | None = None

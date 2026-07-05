@@ -1,8 +1,8 @@
 # server/api/routes/leds.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
-from server.api.models import ColorModel, StripResponse, GroupResponse, CreateStripRequest, UpdateStripRequest, CreateGroupRequest, UpdateGroupRequest, FreezeRequest
-from server.core.types import Target
+from server.core.types import ColorModel
+from server.api.models import FreezeRequest
 from server.api.dependencies import get_state, get_target
 
 router = APIRouter(prefix='/leds', tags=['leds'])

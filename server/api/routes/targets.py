@@ -1,7 +1,7 @@
 # server/api/routes/targets.py
 from fastapi import APIRouter, Depends, HTTPException
 
-from server.api.models import StripResponse, GroupResponse, CreateStripRequest, UpdateStripRequest, CreateGroupRequest, UpdateGroupRequest
+from server.api.models import StripResponse, GroupResponse, StripRequest, GroupRequest
 from server.api.dependencies import get_state
 
 router = APIRouter(prefix='/targets', tags=['targets'])
@@ -25,12 +25,12 @@ def get_list(state=Depends(get_state)):
 
 
 @router.post('/strip', response_model=StripResponse)
-def add_strip(request: CreateStripRequest, state=Depends(get_state)):
+def add_strip(request: StripRequest, state=Depends(get_state)):
     strip = state.add_strip(request.name, request.num_leds)
     return {'id': strip.id, 'name': strip.name, 'num_leds': strip.num_leds}
 
 @router.put('/strip/{strip_id}', response_model=StripResponse)
-def update_strip(strip_id: int, request: UpdateStripRequest, state=Depends(get_state)):
+def update_strip(strip_id: int, request: StripRequest, state=Depends(get_state)):
     strip = state.update_strip(strip_id, request.name, request.num_leds)
     return {'id': strip.id, 'name': strip.name, 'num_leds': strip.num_leds}
 
@@ -48,12 +48,12 @@ def get_strip(strip_id: int, state=Depends(get_state)):
 
 
 @router.post('/group', response_model=GroupResponse)
-def add_group(request: CreateGroupRequest, state=Depends(get_state)):
+def add_group(request: GroupRequest, state=Depends(get_state)):
     group = state.add_group(request.name, request.strip_id, request.start, request.end)
     return {'id': group.id, 'name': group.name, 'strip_id': group.strip.id, 'start': group.start, 'end': group.end}
 
 @router.put('/group/{group_id}', response_model=GroupResponse)
-def update_group(group_id: int, request: UpdateGroupRequest, state=Depends(get_state)):
+def update_group(group_id: int, request: GroupRequest, state=Depends(get_state)):
     if group_id not in state.groups:
         raise HTTPException(status_code=404, detail=f'Group {group_id} not found')
     group = state.update_group(group_id, request.name, request.start, request.end)
