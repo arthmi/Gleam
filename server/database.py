@@ -107,16 +107,16 @@ class Database:
 
 
 
-    def add_scene(self, name: str, module_name: str, config: str):
+    def add_scene(self, name: str, strip_id: int, group_id: int, layer: set, module_name: str, params: dict):
         self.cursor.execute('INSERT INTO scenes (name) VALUES (?)', (name,))
         scene_id = self.cursor.lastrowid
-        self.cursor.execute('INSERT INTO scene_modules (scene_id, module_name, params) VALUES (?, ?, ?)', (scene_id, module_name, config,))
+        self.cursor.execute('INSERT INTO scene_modules (scene_id, strip_id, group_id, layer, module_name, params) VALUES (?, ?, ?, ?, ?, ?)', (scene_id, strip_id, group_id, layer, module_name, params,))
         self.conn.commit()
         return scene_id
     
-    def update_scene(self, id: int, name: str, module_name: str, config: str):
+    def update_scene(self, id: int, name: str, module_name: str, params: dict):
         self.cursor.execute('UPDATE scenes SET name = (?) WHERE id = (?)', (name, id,))
-        self.cursor.execute('UPDATE scene_modules SET module_name = (?), params = (?) WHERE scene_id = (?)', (module_name, config, id,))
+        self.cursor.execute('UPDATE scene_modules SET module_name = (?), params = (?) WHERE scene_id = (?)', (module_name, params, id,))
         self.conn.commit()
 
     def delete_scene(self, id: int):

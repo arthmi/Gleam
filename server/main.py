@@ -2,6 +2,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
+from server.core.types import Target
 from server.database import Database
 from server.core.state import AppState
 
@@ -21,10 +22,10 @@ async def lifespan(app: FastAPI):
     yield
 
     for strip_id in list(state.strips.keys()):
-        await state.remove_strip(strip_id)
+        await state.stop_module(Target(type='strip', id=strip_id))
     db.close()
 
 app = FastAPI(title='Gleam', lifespan=lifespan)
+app.include_router(targets_router)
 app.include_router(leds_router)
 app.include_router(modules_router)
-app.include_router(targets_router)
