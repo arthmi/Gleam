@@ -10,6 +10,38 @@
             "type": "int",
             "default": 1,
             "description": "Blink interval in milliseconds"
+        },
+        {
+            "name": "main_intensity",
+            "type": "float",
+            "default": 1.0,
+            "description": "Minimum brightness level for the LED [0.0 - 1.0]"
+        },
+        {
+            "name": "secondary_intensity",
+            "type": "float",
+            "default": 0.0,
+            "description": "Maximum brightness level for the LED [0.0 - 1.0]"
+        },
+        {
+            "name": "main_color",
+            "type": "ColorModel",
+            "default": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "description": "Main color for the LED"
+        },
+        {
+            "name": "secondary_color",
+            "type": "ColorModel",
+            "default": {
+                "r": 0,
+                "g": 0,
+                "b": 0
+            },
+            "description": "Secondary color for the LED"
         }
     ]
 }
