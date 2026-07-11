@@ -1,8 +1,7 @@
 # rainbow/main.py
 import colorsys
 from server.core.module_base import ModuleBase
-from server.core.types import Layer
-from server.api.models import ColorModel
+from server.core.types import ColorModel, Layer
 
 class RainbowModule(ModuleBase):
     def __init__(self, target, clock, params):

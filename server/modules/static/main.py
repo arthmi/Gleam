@@ -1,7 +1,6 @@
 # static/main.py
 from server.core.module_base import ModuleBase
-from server.api.models import ColorModel
-from server.core.types import Layer
+from server.core.types import ColorModel, Layer
 
 class StaticModule(ModuleBase):
     def __init__(self, target, clock, params):

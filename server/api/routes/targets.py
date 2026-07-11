@@ -6,7 +6,7 @@ from server.api.dependencies import get_state
 
 router = APIRouter(prefix='/targets', tags=['targets'])
 
-@router.get('/list')
+@router.get('')
 def get_list(state=Depends(get_state)):
     list = {}
     for strip in state.strips.values():
