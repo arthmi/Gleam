@@ -12,6 +12,7 @@ class LedStrip:
         self.color_buffer: list[ColorModel]= [ColorModel(r=0, g=0, b=0)] * num_leds
         self.white_buffer: list[int]= [0] * num_leds
         self.intensity_buffer: list[float]= [1.0] * num_leds
+        self.dim_buffer: list[float] = [1.0] * num_leds
 
     def set_color(self, color: ColorModel):
         self.color_buffer = [color] * self.num_leds
@@ -22,13 +23,17 @@ class LedStrip:
     def set_intensity(self, intensity: float):
         self.intensity_buffer = [intensity] * self.num_leds
 
+    def set_dim(self, dim: float):
+        self.dim_buffer = [dim] * self.num_leds
+
     def set_pixel(
             self,
             pixel: int,
             *,
             color: ColorModel|None=None,
             white: int|None=None,
-            intensity: float|None=None
+            intensity: float|None=None,
+            dim: float|None=None
         ):
         if pixel < 0 or pixel >= self.num_leds:
             raise ValueError('Pixel index is out of bounds')
@@ -37,8 +42,9 @@ class LedStrip:
         if white is not None:
             self.white_buffer[pixel] = white
         if intensity is not None:
-            intensity = min(intensity, 1.0)
             self.intensity_buffer[pixel] = intensity
+        if dim is not None:
+            self.dim_buffer[pixel] = dim
         
 
     def show(self, start: int=0, end: int=-1):
@@ -47,15 +53,16 @@ class LedStrip:
             r, g, b = color.r, color.g, color.b
             intensity = self.intensity_buffer[pixel + start]
             w = self.white_buffer[pixel + start]
+            dim = self.dim_buffer[pixel + start]
             final = (
-                int(r * intensity),
-                int(g * intensity),
-                int(b * intensity),
-                int(w)
+                int(r * intensity * dim),
+                int(g * intensity * dim),
+                int(b * intensity * dim),
+                int(w *   255     * dim)
             )
             string += f'\n\033[38;2;{final[0]};{final[1]};{final[2]}m\u2588\u2588\033[0m'
             string += f'\033[38;2;{final[3]};{final[3]};{final[3]}m\u2588\u2588\033[0m    '
-            string += f'{r = }, {g = }, {b = }, {w = }, {intensity = }'
+            string += f'{r = }, {g = }, {b = }, {w = }, {intensity = }, {dim = }'
         print(string)
 
     def clear(self):
@@ -79,6 +86,7 @@ class LedGroup:
         self.start = start
         self.end = end
         self.num_leds = end - start
+        self.dim_buffer: float = 1.0
 
         self.frozen_layers: set[Layer] = set()
 
@@ -109,6 +117,9 @@ class LedGroup:
         for pixel in range(self.end - self.start + 1):
             self.strip.set_pixel(pixel + self.start, intensity=intensity)
 
+    def set_dim(self, dim: float):
+        for pixel in range(self.end - self.start + 1):
+            self.strip.set_pixel(pixel + self.start, dim=dim)
 
     def show(self):
         self.strip.show(self.start, self.end)

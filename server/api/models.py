@@ -38,9 +38,13 @@ class GroupRequest(BaseModel):
     end: int = Field(..., ge=0)
 
 class FreezeRequest(BaseModel):
-    layers: set[Layer] | None = None
+    layers: set[Layer]|None = None
 
 class SceneRequest(BaseModel):
     name: str
     module_name: str
     params: dict
+
+class DimRequest(BaseModel):
+    dim: float = Field(..., ge=0.0, le=1.0)
+    targets: list[Target]|None = None
