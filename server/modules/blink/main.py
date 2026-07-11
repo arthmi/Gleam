@@ -15,11 +15,13 @@ class BlinkModule(ModuleBase):
             if self.clock.frame % self.every_n_frames == 0:
                 match is_on:
                     case 1:
-                        self._set_color(self.params['main_color'])
-                        self._set_intensity(self.params['secondary_intensity'])
+                        self._set_color(ColorModel(**self.params['main_color']))
+                        self._set_intensity(self.params['main_intensity'])
+                        self._set_white(self.params['main_white'])
                         self._is_on = True
                     case 0:
-                        self._set_color(self.params['secondary_color'])
-                        self._set_intensity(self.params['main_intensity'])
+                        self._set_color(ColorModel(**self.params['secondary_color']))
+                        self._set_intensity(self.params['secondary_intensity'])
+                        self._set_white(self.params['secondary_white'])
                         self._is_on = False
                 self.target.show()

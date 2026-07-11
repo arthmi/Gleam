@@ -42,6 +42,18 @@
                 "b": 0
             },
             "description": "Secondary color for the LED"
+        },
+        {
+            "name": "main_white",
+            "type": "float",
+            "default": 1.0,
+            "description": "Main white brightness for the LED [0.0 - 1.0]"
+        },
+        {
+            "name": "secondary_white",
+            "type": "float",
+            "default": 0.0,
+            "description": "Secondary white brightness for the LED [0.0 - 1.0]"
         }
     ]
 }
