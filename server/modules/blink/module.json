@@ -4,6 +4,7 @@
     "description": "A blinking light module",
     "entry": "main.py",
     "class": "BlinkModule",
+    "requirements": null,
     "parameters": [
         {
             "name": "delay",

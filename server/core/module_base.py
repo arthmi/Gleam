@@ -34,10 +34,17 @@ class ModuleBase(ABC):
         if Layer.WHITE in self.layers:
             self.target.set_white(white)
 
-    def _set_pixel(self, index: int, color=None, intensity=None, white=None):
+    def _set_pixel(
+            self,
+            pixel: int,
+            *,
+            color: ColorModel|None=None,
+            white: int|None=None,
+            intensity: float|None=None,
+        ):
         if color is not None and Layer.COLOR in self.layers:
-            self.target.set_pixel(index, color=color)
+            self.target.set_pixel(pixel, color=color)
         if intensity is not None and Layer.INTENSITY in self.layers:
-            self.target.set_pixel(index, intensity=intensity)
+            self.target.set_pixel(pixel, intensity=intensity)
         if white is not None and Layer.WHITE in self.layers:
-            self.target.set_pixel(index, white=white)
+            self.target.set_pixel(pixel, white=white)

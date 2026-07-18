@@ -4,6 +4,7 @@
     "description": "A static light module",
     "entry": "main.py",
     "class": "StaticModule",
+    "requirements": null,
     "parameters": [
         {
             "name": "color",

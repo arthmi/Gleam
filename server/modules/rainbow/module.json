@@ -4,6 +4,7 @@
     "description": "A rainbow effect module",
     "entry": "main.py",
     "class": "RainbowModule",
+    "requirements": null,
     "parameters": [
         {
             "name": "speed",
