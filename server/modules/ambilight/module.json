@@ -1,0 +1,41 @@
+{
+    "name": "ambilight",
+    "version": "1.0.0",
+    "display_name": "Ambilight",
+    "description": "Reproduces on-screen edge colors on LED groups mapped to screen sides",
+    "entry": "main.py",
+    "class": "AmbilightModule",
+    "requirements": "requirements.txt",
+    "parameters": [
+        {
+            "name": "device_index",
+            "type": "int",
+            "default": 0,
+            "description": ""
+        },
+        {
+            "name": "band_depth_percent",
+            "type": "float",
+            "default": 0.15,
+            "description": ""
+        },
+        {
+            "name": "weight_exponent",
+            "type": "int",
+            "default": 1,
+            "description": ""
+        },
+        {
+            "name": "edge",
+            "type": "str",
+            "default": null,
+            "description": ""
+        },
+        {
+            "name": "reversed",
+            "type": "bool",
+            "default": false,
+            "description": ""
+        }
+    ]
+}
