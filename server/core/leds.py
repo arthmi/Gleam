@@ -48,8 +48,6 @@ class LedStrip:
         
 
     def show(self, start: int=0, end: int=-1):
-        print('show()')
-        return
         string = ''
         for pixel, color in enumerate(self.color_buffer[start:end]):
             r, g, b = color.r, color.g, color.b
