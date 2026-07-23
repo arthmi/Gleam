@@ -14,18 +14,6 @@
             "description": ""
         },
         {
-            "name": "band_depth_percent",
-            "type": "float",
-            "default": 0.15,
-            "description": ""
-        },
-        {
-            "name": "weight_exponent",
-            "type": "int",
-            "default": 1,
-            "description": ""
-        },
-        {
             "name": "edge",
             "type": "str",
             "default": null,
@@ -35,6 +23,24 @@
             "name": "reversed",
             "type": "bool",
             "default": false,
+            "description": ""
+        },
+        {
+            "name": "band_depth_percent",
+            "type": "float",
+            "default": 0.20,
+            "description": ""
+        },
+        {
+            "name": "weight_exponent",
+            "type": "int",
+            "default": 1,
+            "description": ""
+        },
+        {
+            "name": "blur_sigma",
+            "type": "float",
+            "default": 1.5,
             "description": ""
         }
     ]

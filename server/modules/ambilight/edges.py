@@ -56,13 +56,32 @@ def get_edge_colors(
         band_depth_percent: float,
         led_count: int,
         reversed_: bool,
-        weight_exponent: float = 2.0,
+        weight_exponent: float,
+        blur_sigma: float
     ) -> np.ndarray:
     band = extract_edge_band(frame, edge, band_depth_percent)
     colors = compute_weighted_colors(band, weight_exponent)
+    colors = apply_spatial_blur(colors, blur_sigma)
     result = downsample_to_led_count(colors, led_count)
-
     if reversed_:
         result = result[::-1]
-
     return result
+
+def apply_spatial_blur(colors: np.ndarray, sigma: float) -> np.ndarray:
+    if sigma <= 0:
+        return colors
+    kernel = gaussian_kernel(sigma)
+    radius = len(kernel) // 2
+    colors = colors.astype(np.float32)
+    blurred = np.empty_like(colors)
+    for c in range(colors.shape[1]):
+        padded = np.pad(colors[:, c], (radius, radius), mode='edge')
+        blurred[:, c] = np.convolve(padded, kernel, mode='valid')
+    return blurred
+
+def gaussian_kernel(sigma: float) -> np.ndarray:
+    radius = int(np.ceil(3 * sigma))
+    x = np.arange(-radius, radius + 1)
+    kernel = np.exp(-(x**2) / (2 * sigma**2))
+    kernel /= kernel.sum()
+    return kernel

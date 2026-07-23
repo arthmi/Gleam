@@ -19,7 +19,15 @@ class AmbilightModule(ModuleBase):
             frame = self.capture.get_latest_frame()
             if frame is None:
                 continue
-            edge = get_edge_colors(frame, Edge(self.params['edge']), self.params['band_depth_percent'], self.target.num_leds, self.params['reversed'], self.params['weight_exponent'])
+            edge = get_edge_colors(
+                frame,
+                Edge(self.params['edge']),
+                self.params['band_depth_percent'],
+                self.target.num_leds,
+                self.params['reversed'],
+                self.params['weight_exponent'],
+                self.params['blur_sigma']
+            )
             for pixel, color in enumerate(edge):
                 self._set_pixel(pixel=pixel, color=ColorModel(r=round(color[0]), g=round(color[1]), b=round(color[2])))
             self.target.show()
