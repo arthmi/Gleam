@@ -1,0 +1,31 @@
+{
+    "name": "ambilight",
+    "version": "1.0.0",
+    "display_name": "Ambilight",
+    "description": "Reproduces on-screen edge colors on LED groups mapped to screen sides",
+    "entry": "main.py",
+    "class": "AmbilightModule",
+    "requirements": "requirements.txt",
+    "parameters": [
+        {
+            "name": "device_index",
+            "description": "Index of the USB video capture device, as enumerated by OpenCV/V4L2 (e.g. /dev/video0 = 0)."
+        },
+        {
+            "name": "edge",
+            "description": "Physical screen edge this group samples from: 'top', 'bottom', 'left', or 'right'."
+        },
+        {
+            "name": "reversed",
+            "description": "Reverses LED sampling order along the edge to match physical strip wiring direction."
+        },
+        {
+            "name": "band_depth_percent",
+            "description": "Depth of the sampled edge band as a percentage of the screen's perpendicular dimension (e.g. 20% of screen height for a 'left' edge)."
+        },
+        {
+            "name": "weight_exponent",
+            "description": "Exponent applied to distance-based pixel weighting within the band; higher values bias the average toward pixels closest to the physical screen edge."
+        }
+    ]
+}
