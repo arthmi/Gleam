@@ -5,27 +5,54 @@
     "description": "Reproduces on-screen edge colors on LED groups mapped to screen sides",
     "entry": "main.py",
     "class": "AmbilightModule",
-    "requirements": "requirements.txt",
     "parameters": [
         {
             "name": "device_index",
+            "type": "int",
+            "default": 0,
             "description": "Index of the USB video capture device, as enumerated by OpenCV/V4L2 (e.g. /dev/video0 = 0)."
         },
         {
             "name": "edge",
+            "type": "str",
+            "default": null,
             "description": "Physical screen edge this group samples from: 'top', 'bottom', 'left', or 'right'."
         },
         {
             "name": "reversed",
+            "type": "bool",
+            "default": false,
             "description": "Reverses LED sampling order along the edge to match physical strip wiring direction."
         },
         {
             "name": "band_depth_percent",
+            "type": "float",
+            "default": 0.20,
             "description": "Depth of the sampled edge band as a percentage of the screen's perpendicular dimension (e.g. 20% of screen height for a 'left' edge)."
         },
         {
             "name": "weight_exponent",
+            "type": "int",
+            "default": 1,
             "description": "Exponent applied to distance-based pixel weighting within the band; higher values bias the average toward pixels closest to the physical screen edge."
+        },
+        {
+            "name": "sample_overlap_percent",
+            "type": "float",
+            "default": 0.20,
+            "description": "How much each LED's sampling window overlaps with its neighbors, as a percentage of one LED's segment width. Smooths hard color transitions between adjacent LEDs."
+        },
+        {
+            "name": "saturation_boost",
+            "type": "float",
+            "default": 1.30,
+            "description": "Multiplier applied to color saturation after sampling, to compensate for colors looking dull once reproduced on LEDs versus on an emissive screen."
+        },
+        {
+            "name": "temporal_smoothing_tau",
+            "type": "float",
+            "default": 0.15,
+            "description": "Time constant (in seconds) for frame-to-frame color smoothing. Higher values give a calmer, more fluid response; lower values track the screen more instantly but can flicker."
         }
     ]
 }

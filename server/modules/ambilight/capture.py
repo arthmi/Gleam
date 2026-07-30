@@ -14,9 +14,9 @@ class AmbilightCapture:
         self._thread: threading.Thread | None = None
         
         self._ref_count: int = 0
-        self._lock: threading.Lock = threading.Lock()
+        self._lock = threading.Lock()
         self._latest_frame: np.ndarray | None = None
-        self._frame_lock: threading.Lock = threading.Lock()
+        self._frame_lock = threading.Lock()
 
         self._running: bool = False
 
@@ -69,11 +69,13 @@ class AmbilightCapture:
             if not self._cap:
                 raise RuntimeError("_capture_loop running but self._cap is None")
             ret, frame = self._cap.read()
-            if ret is True:
-                with self._frame_lock:
-                    self._latest_frame = frame        
-            else:
+            if not ret:
                 raise RuntimeError(f"Failed to read frame from device {self.device_index}")
+            with self._frame_lock:
+                self._latest_frame = frame
+            cv2.imshow("Ambilight", frame)
+            cv2.waitKey(1)
+                
 
     def get_latest_frame(self) -> np.ndarray | None:
         with self._frame_lock:
