@@ -1,7 +1,8 @@
 # audio_reactive/analysis.py
-from dataclasses import dataclass
-
 import numpy as np
+import math
+
+from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class AudioFeatures:
@@ -23,7 +24,6 @@ class Analyzer:
         self._buffer = np.zeros(window_size, dtype=np.float32) # preallocate ring buffer
         self._write_index = 0
         self._peak = 2 * noise_floor
-        raise NotImplementedError
 
     def process(self, block: np.ndarray) -> AudioFeatures:
         if len(block) >= self.window_size:
@@ -38,13 +38,13 @@ class Analyzer:
                 self._buffer[self._write_index:end_index] = block # write the block to the buffer
             self._write_index = end_index
 
-        rms = sqrt(mean(self._buffer ** 2))
+        rms = math.sqrt(np.mean(self._buffer ** 2))
         if rms > self._peak:
             self._peak = rms # instant attack
         else:
             block_duration = len(block) / self.sample_rate
-            self._peak *= exp(-block_duration / self.agc_release_s) # exponential decay
+            self._peak *= math.exp(-block_duration / self.agc_release_s) # exponential decay
 
         peak = max(self._peak, 2 * self.noise_floor)                   # avoid division by zero and ensure a minimum peak level
-        level = clip((rms - noise_floor) / (peak - noise_floor), 0, 1) # Subtracting noise_floor acts as a simple noise gate
+        level = np.clip((rms - self.noise_floor) / (peak - self.noise_floor), 0, 1) # Subtracting noise_floor acts as a simple noise gate
         return AudioFeatures(level=float(level))

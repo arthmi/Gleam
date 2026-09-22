@@ -4,7 +4,7 @@ import threading
 import numpy as np
 import sounddevice as sd
 
-from analysis import Analyzer, AudioFeatures
+from server.modules.audio_reactive.analysis import Analyzer, AudioFeatures
 
 
 class AudioCapture:
@@ -26,15 +26,18 @@ class AudioCapture:
             instance = cls._instances[device]
             instance._refs += 1
             if instance._refs == 1: # first user, start the stream
-                instance._start()
-                catch Exception as e:
+                try:
+                    instance._start()
+                except Exception as e:
                     instance._refs -= 1
                     del cls._instances[device]
-                    raise RuntimeError(f'Failed to start audio capture for device '{device}': {e}') from e
+                    raise RuntimeError(f'Failed to start audio capture for device \'{device}\': {e}') from e
             return instance
 
     def release(self) -> None:
-        with cls._lock:
+        with self._lock:
+            if self._refs <= 0:
+                return
             self._refs -= 1
             if self._refs == 0:
                 self._stop()
