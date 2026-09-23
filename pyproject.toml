@@ -1,2 +1,15 @@
+[project]
+name = "gleam"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.139.2",
+    "uvicorn==0.51.0",
+    "numpy==2.5.1",
+    "opencv-python-headless==5.0.0.93",
+    "pillow==12.3.0",
+    "matplotlib==3.11.1",
+]
+
 [tool.vercel]
 entrypoint = "server.main:app"
