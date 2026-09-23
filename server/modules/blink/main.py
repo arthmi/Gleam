@@ -24,4 +24,4 @@ class BlinkModule(ModuleBase):
                         self._set_intensity(self.params['secondary_intensity'])
                         self._set_white(self.params['secondary_white'])
                         self._is_on = False
-                self.target.show()
+            self.target.show()

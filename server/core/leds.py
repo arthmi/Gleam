@@ -60,8 +60,9 @@ class LedStrip:
                 int(b * intensity * dim),
                 int(w *   255     * dim)
             )
-            string += f'\n\033[38;2;{final[0]};{final[1]};{final[2]}m\u2588\u2588\033[0m'
-            string += f'\033[38;2;{final[3]};{final[3]};{final[3]}m\u2588\u2588\033[0m    '
+            string += '\n'
+            string += f'\033[38;2;{final[0]};{final[1]};{final[2]}m\u2588\u2588\033[0m'
+            # string += f'\033[38;2;{final[3]};{final[3]};{final[3]}m\u2588\u2588\033[0m    '
             string += f'{r = }, {g = }, {b = }, {w = }, {intensity = }, {dim = }'
         print(string)
 
