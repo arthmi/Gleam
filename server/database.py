@@ -39,7 +39,7 @@ class Database:
                 name TEXT NOT NULL,
                 strip_id INTEGER REFERENCES strips(id) ON DELETE CASCADE,
                 led_start INTEGER NOT NULL,
-                led_end INTEGER NOT NULL,
+                led_end INTEGER NOT NULL
             )
         ''')
         self.conn.commit()
